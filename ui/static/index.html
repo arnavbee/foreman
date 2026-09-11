@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Foreman — hire agents like you would hire people</title>
+<style>
+:root{--bg:#0b0d10;--card:#14181d;--line:#242a31;--fg:#e8ecf0;--dim:#8a94a0;--ok:#33c17d;--bad:#ff5c5c;--warn:#f5b642;--acc:#4f8cff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 -apple-system,Inter,Segoe UI,Roboto,sans-serif}
+header{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:baseline}
+h1{font-size:18px;margin:0}h1 small{color:var(--dim);font-weight:400;margin-left:10px}
+main{padding:20px 24px;display:grid;grid-template-columns:1.1fr 1fr 1fr 1.2fr;gap:16px}
+@media(max-width:1100px){main{grid-template-columns:1fr 1fr}}@media(max-width:700px){main{grid-template-columns:1fr}}
+.col{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;min-height:240px}
+.col h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 10px}
+textarea{width:100%;min-height:96px;background:#0f1216;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;resize:vertical}
+button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer}button:disabled{opacity:.5}
+.item{border:1px solid var(--line);border-radius:8px;padding:9px 10px;margin:8px 0;background:#0f1216}
+.item b{font-weight:600}.sub{color:var(--dim);font-size:12px}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:600;margin-left:6px}
+.ok{background:rgba(51,193,125,.15);color:var(--ok)}.bad{background:rgba(255,92,92,.15);color:var(--bad)}.warn{background:rgba(245,182,66,.15);color:var(--warn)}.run{background:rgba(79,140,255,.15);color:var(--acc)}
+.chk{display:flex;gap:8px;font-size:12px;margin-top:4px}.chk span:first-child{width:64px;color:var(--dim)}
+pre{white-space:pre-wrap;font-size:12px;background:#0f1216;border:1px solid var(--line);border-radius:8px;padding:10px;max-height:340px;overflow:auto}
+.receipt{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--dim);margin-top:4px}
+#summary{margin-top:10px}a{color:var(--acc)}
+</style></head><body>
+<header><h1>Foreman <small>hire agents like you would hire people: check, then trust</small></h1>
+<span id="status" class="sub"></span></header>
+<main>
+ <section class="col"><h2>1 · Work order → plan</h2>
+  <textarea id="order">Prepare the Q3 vendor comparison for procurement: pricing, SLA and support for the three storage vendors, a 3-year total cost table, and a one-page recommendation memo under 350 words.</textarea>
+  <div style="margin-top:8px;display:flex;gap:8px;align-items:center"><button id="go">Run Foreman</button><span id="mode" class="sub"></span></div>
+  <div id="plan"></div></section>
+ <section class="col"><h2>2 · Registry → vetting</h2><div id="vet"></div></section>
+ <section class="col"><h2>3 · Delegation → verification</h2><div id="del"></div></section>
+ <section class="col"><h2>4 · Deliverable → audit ledger</h2><div id="summary"></div><pre id="out"></pre><div id="receipts"></div></section>
+</main>
+<script>
+const $=s=>document.querySelector(s);const el=(h)=>{const d=document.createElement('div');d.innerHTML=h;return d.firstElementChild};
+const pill=(ok,t)=>`<span class="pill ${ok===true?'ok':ok===false?'bad':ok}">${t}</span>`;
+let vetCards={},delCards={},nrec=0;
+function handle(ev){
+  if(ev.kind==='run'){$('#mode').textContent=ev.fake_llm?'fake model (no key)':'Gemini';$('#status').textContent='run '+ev.run_id;}
+  if(ev.kind==='plan'){const p=$('#plan');p.innerHTML='';(ev.subtasks||[]).forEach(s=>p.appendChild(el(`<div class="item"><b>${s.id}</b> · ${s.skill}<div>${s.goal}</div><div class="sub">accept: ${s.accept}</div></div>`)));}
+  if(ev.kind==='candidate'){const c=el(`<div class="item"><b>${ev.name}</b>${pill('run','checking')}<div class="sub">${ev.declared||''}</div><div class="sub">skills: ${(ev.skills||[]).join(', ')||'—'} · card ${ev.card_hash||'?'}</div><div class="checks"></div></div>`);vetCards[ev.name]=c;$('#vet').appendChild(c);}
+  if(ev.kind==='vet'){const c=vetCards[ev.name];if(!c)return;c.querySelector('.pill').outerHTML=pill(ev.hireable,(ev.hireable?'hireable ':'rejected ')+ev.score+'/100');const ch=c.querySelector('.checks');ch.innerHTML='';ev.checks.forEach(k=>ch.appendChild(el(`<div class="chk"><span>${k.check}</span><span>${k.ok?'✓':'✗'} ${k.detail||''}</span></div>`)));}
+  if(ev.kind==='delegate'){const k=ev.task_id;let c=delCards[k];if(!c){c=el(`<div class="item"><b>${k}</b><div class="log"></div></div>`);delCards[k]=c;$('#del').appendChild(c);}c.querySelector('.log').appendChild(el(`<div>→ ${ev.agent} (attempt ${ev.attempt})${pill('run','working')}</div>`));}
+  if(ev.kind==='verify'){const c=delCards[ev.task_id];if(!c)return;const last=c.querySelector('.log').lastElementChild;last.querySelector('.pill').outerHTML=pill(ev.passed,(ev.passed?'verified':'failed')+' · '+ev.how);last.appendChild(el(`<div class="sub">${(ev.reasons||[]).join('; ')}</div>`));}
+  if(ev.kind==='reroute'){const c=delCards[ev.task_id];c&&c.querySelector('.log').appendChild(el(`<div class="sub">↻ re-routing away from ${ev.from_agent}</div>`));}
+  if(ev.kind==='receipt'){nrec++;const r=ev.receipt;$('#receipts').appendChild(el(`<div class="receipt">#${r.receipt_id} ${r.kind} ${r.agent_name} in:${r.input_hash} out:${r.output_hash} ${r.latency_ms}ms $${r.cost_usd} ${r.status}</div>`));}
+  if(ev.kind==='deliverable'){$('#out').textContent=ev.markdown;}
+  if(ev.kind==='done'){$('#summary').innerHTML=`${pill(ev.status==='ok',ev.status)} ${ev.resolved}/${ev.subtasks} subtasks · ${ev.receipts} receipts · $${ev.spent_usd} · hired ${(ev.hired||[]).join(', ')} · rejected ${(ev.rejected||[]).join(', ')} · <a href="/runs/${ev.run_id}/ledger.json">download audit</a>`;$('#go').disabled=false;}
+}
+$('#go').onclick=async()=>{$('#go').disabled=true;['#plan','#vet','#del','#summary','#out','#receipts'].forEach(s=>$(s).innerHTML='');vetCards={};delCards={};
+  const r=await fetch('/runs',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({work_order:$('#order').value})});const {run_id}=await r.json();
+  const es=new EventSource(`/runs/${run_id}/events`);es.onmessage=e=>{const ev=JSON.parse(e.data);handle(ev);if(ev.kind==='done')es.close();};es.onerror=()=>{es.close();$('#go').disabled=false;};};
+</script></body></html>

@@ -1,0 +1,7 @@
+a2a-sdk==1.1.2
+fastapi==0.141.1
+google-adk==2.9.0
+google-genai==2.23.0
+httpx==0.28.1
+sse-starlette==3.4.11
+uvicorn==0.52.4

@@ -8,6 +8,7 @@ import httpx
 from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
 from common.llm import make_agent, ask, parse_json, FAKE
 from common.receipts import Ledger, Receipt, sha
+from common import scorecards
 
 REGISTRY_URL = os.getenv("REGISTRY_URL", "http://localhost:8100")
 WELL_KNOWN = "/.well-known/agent-card.json"
@@ -87,7 +88,7 @@ class Foreman:
             cd["card_hash"] = sha(card) if card else ""
             cd["skills"] = [s.get("id") or s.get("name") for s in (card.get("skills") or [])] if card else []
             cd["declared"] = (card.get("description") or "")[:200]
-            self.ledger.emit("candidate", **{k: cd.get(k) for k in ("name", "url", "alive", "card_hash", "skills", "declared")})
+            self.ledger.emit("candidate", **{k: cd.get(k) for k in ("name", "url", "alive", "card_hash", "skills", "declared")}, track=scorecards.get(cd["name"]))
         self.ledger.emit("stage", name="discover", status="done", count=len(cands))
         return cands
 
@@ -131,6 +132,7 @@ class Foreman:
     def _vet_result(self, cand, checks, score):
         res = dict(name=cand["name"], url=cand["url"], score=score, hireable=score >= VET_THRESHOLD, checks=checks,
                    skills=cand.get("skills") or [], card_hash=cand.get("card_hash", ""))
+        scorecards.record_vet(cand["name"], score, res["hireable"], cand.get("card_hash", ""))
         self.ledger.emit("vet", **res)
         return res
 
@@ -164,6 +166,7 @@ class Foreman:
             jt, _, _ = await ask(JUDGE, f"SUBTASK: {sub['goal']}\nACCEPT: {sub['accept']}\n\nMATERIAL:\n{self.material}\n\nOUTPUT from {agent_name}:\n{out}")
             j = parse_json(jt, {}) or {}
             v = dict(task_id=sub["id"], agent=agent_name, passed=bool(j.get("pass")), score=j.get("score", 0), reasons=j.get("reasons", [jt[:200]]), how="judge")
+        scorecards.record_job(agent_name, v["passed"])
         self.ledger.emit("verify", **v)
         return v
 

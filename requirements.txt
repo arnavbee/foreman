@@ -5,3 +5,4 @@ google-genai==2.23.0
 httpx==0.28.1
 sse-starlette==3.4.11
 uvicorn==0.52.4
+cryptography==50.0.1

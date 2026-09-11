@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib, json, time, uuid
 from dataclasses import dataclass, field, asdict
 from typing import Any, Optional
+from common.signing import event_hash, sign, PUBLIC_KEY_B64
 
 
 def sha(obj: Any) -> str:
@@ -54,7 +55,11 @@ class Ledger:
         self._subs: list = []
 
     def emit(self, kind: str, **data):
-        ev = {"ts": time.time(), "run_id": self.run_id, "kind": kind, **data}
+        ev = {"ts": time.time(), "run_id": self.run_id, "kind": kind, "seq": len(self.events), **data}
+        ev["prev"] = self.events[-1]["hash"] if self.events else ""
+        if kind == "receipt":
+            ev["sig"] = sign(ev["receipt"])
+        ev["hash"] = event_hash(ev)
         self.events.append(ev)
         for q in list(self._subs):
             try:
@@ -77,4 +82,4 @@ class Ledger:
         return [e["receipt"] for e in self.events if e["kind"] == "receipt"]
 
     def to_json(self) -> str:
-        return json.dumps({"run_id": self.run_id, "events": self.events}, indent=2, default=str)
+        return json.dumps({"run_id": self.run_id, "public_key": PUBLIC_KEY_B64, "events": self.events}, indent=2, default=str)

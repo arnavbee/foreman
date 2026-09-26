@@ -38,7 +38,7 @@ class Receipt:
         self.output_hash = sha(output)
         self.status, self.note = status, note
         self.tokens_in, self.tokens_out = tokens_in, tokens_out
-        # Gemini 2.5 Flash list price, USD per 1M tokens (input 0.30, output 2.50); indicative only.
+        # Flash-class list price estimate, USD per 1M tokens (input 0.30, output 2.50); indicative only.
         self.cost_usd = round(tokens_in * 0.30e-6 + tokens_out * 2.50e-6, 6)
         return self
 

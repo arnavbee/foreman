@@ -10,7 +10,7 @@ Deliverables
 - [ ] Deployed link (Cloud Run UI, pre-warmed, min-instances 1 during judging window)
 - [ ] Public GitHub repo: https://github.com/arnavbee/foreman (README with architecture, run instructions, screenshots)
 - [ ] Video under 3 minutes on YouTube (unlisted is fine) — script in VIDEO.md
-- [ ] PDF deck — outline in DECK.md
+- [x] PDF deck — `docs/Foreman-deck.pdf`, 10 slides, built from DECK.md outline (2 Oct)
 - [ ] Category specified in the form; one-paragraph description ready (below)
 
 One-paragraph description (draft)

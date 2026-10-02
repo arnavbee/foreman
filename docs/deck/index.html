@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Foreman — deck</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; background: #0b0d10; color: #f3f4f1; }
+  .slide {
+    width: 1280px; height: 720px; padding: 70px 90px;
+    display: flex; flex-direction: column; justify-content: center;
+    page-break-after: always; position: relative; overflow: hidden;
+    background: radial-gradient(1200px 600px at 85% -10%, rgba(44,80,238,.18), transparent 60%), #0b0d10;
+  }
+  .eyebrow { font-family: "SF Mono", Menlo, monospace; font-size: 15px; letter-spacing: .14em; text-transform: uppercase; color: #6b86ff; margin: 0 0 18px; }
+  h1 { font-size: 56px; line-height: 1.08; font-weight: 700; margin: 0 0 22px; letter-spacing: -.02em; }
+  h1 .accent { color: #6b86ff; }
+  .lede { font-size: 24px; line-height: 1.45; color: #c8cad0; max-width: 920px; margin: 0 0 10px; }
+  .num { position: absolute; bottom: 36px; right: 48px; font-family: "SF Mono", Menlo, monospace; font-size: 14px; color: #52565f; }
+  .brand { position: absolute; top: 36px; right: 48px; font-family: "SF Mono", Menlo, monospace; font-size: 14px; color: #52565f; letter-spacing: .08em; }
+  .loop { display: flex; align-items: center; gap: 0; margin-top: 30px; flex-wrap: wrap; }
+  .loop span.step { font-family: "SF Mono", Menlo, monospace; font-size: 20px; padding: 14px 22px; border: 1px solid #2c3140; border-radius: 10px; background: #12151b; color: #e7e8ea; }
+  .loop span.arrow { color: #6b86ff; font-size: 22px; margin: 0 10px; }
+  .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 26px; }
+  .check { background: #12151b; border: 1px solid #22262f; border-radius: 14px; padding: 22px 26px; }
+  .check b { display: block; font-size: 19px; color: #fff; margin-bottom: 6px; }
+  .check p { margin: 0; font-size: 16px; color: #9ba0ab; line-height: 1.45; }
+  .reject { margin-top: 24px; font-family: "SF Mono", Menlo, monospace; font-size: 17px; color: #ff8585; background: #1a1012; border: 1px solid #3a2328; border-radius: 10px; padding: 14px 20px; display: inline-block; }
+  .pull { font-size: 30px; line-height: 1.4; font-weight: 500; color: #fff; max-width: 980px; }
+  .pull .q { color: #6b86ff; }
+  table.stats { border-collapse: collapse; margin-top: 28px; width: 100%; }
+  table.stats th, table.stats td { text-align: left; padding: 12px 18px; font-size: 17px; border-bottom: 1px solid #22262f; }
+  table.stats th { font-family: "SF Mono", Menlo, monospace; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #6b86ff; }
+  table.stats td.ok { color: #7ee787; }
+  table.stats td.bad { color: #ff8585; }
+  .stack { display: flex; gap: 16px; margin-top: 30px; flex-wrap: wrap; }
+  .pill { font-family: "SF Mono", Menlo, monospace; font-size: 16px; padding: 12px 20px; border-radius: 999px; border: 1px solid #2c3140; background: #12151b; color: #e7e8ea; }
+  .shot { margin-top: 20px; border-radius: 14px; border: 1px solid #22262f; max-width: 640px; max-height: 280px; object-fit: cover; object-position: top; box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+  .cols { display: flex; gap: 50px; margin-top: 10px; }
+  .col { flex: 1; }
+  .ghost { color: #52565f; }
+  ul.clean { margin: 18px 0 0; padding: 0; list-style: none; }
+  ul.clean li { font-size: 19px; color: #d6d8dc; padding: 10px 0 10px 30px; position: relative; border-bottom: 1px solid #1a1d23; }
+  ul.clean li::before { content: "→"; position: absolute; left: 0; color: #6b86ff; }
+  .cap { font-family: "SF Mono", Menlo, monospace; font-size: 14px; color: #52565f; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- 1. Title -->
+<section class="slide">
+  <div class="brand">FOREMAN</div>
+  <div class="eyebrow">Google Cloud AI Builder Cup 2026 — Future of Work &amp; Enterprise Productivity</div>
+  <h1>Hire agents like you would<br>hire people. <span class="accent">Check, then trust.</span></h1>
+  <p class="lede">An enterprise agent that hires, vets and audits other agents — so delegating work to AI stops being a leap of faith.</p>
+  <div class="num">01 / 10</div>
+</section>
+
+<!-- 2. The shift -->
+<section class="slide">
+  <div class="eyebrow">The shift</div>
+  <h1>Enterprise work is already<br>being delegated to <span class="accent">third-party agents.</span></h1>
+  <p class="lede">A2A cards, MCP registries, agent stores — every one of them lists what an agent claims to do.</p>
+  <p class="pull"><span class="q">Not one of them verifies it.</span> A card is a résumé an agent wrote about itself, and nobody is checking references.</p>
+  <div class="num">02 / 10</div>
+</section>
+
+<!-- 3. The pain -->
+<section class="slide">
+  <div class="eyebrow">The pain, in one sentence</div>
+  <p class="pull" style="font-size:40px; max-width:1000px;">
+    <span class="q">"Who did this, what did it see,<br>and how do we know it's right?"</span>
+  </p>
+  <p class="lede" style="margin-top:34px;">— any compliance lead, the moment an agent touches a procurement memo, an invoice, a customer reply.</p>
+  <p class="lede"><span class="accent" style="font-weight:600;">Today's answer: nobody knows.</span> That's the gap Foreman closes.</p>
+  <div class="num">03 / 10</div>
+</section>
+
+<!-- 4. Foreman in one picture -->
+<section class="slide">
+  <div class="eyebrow">Foreman in one picture</div>
+  <h1>A deterministic loop,<br>Gemini at the judgment calls.</h1>
+  <div class="loop">
+    <span class="step">PLAN</span><span class="arrow">→</span>
+    <span class="step">DISCOVER</span><span class="arrow">→</span>
+    <span class="step">VET</span><span class="arrow">→</span>
+    <span class="step">DELEGATE</span><span class="arrow">→</span>
+    <span class="step">VERIFY</span><span class="arrow">→</span>
+    <span class="step">DELIVER + LEDGER</span>
+  </div>
+  <p class="lede" style="margin-top:34px;">Every box is auditable. Nothing in the middle is a black box.</p>
+  <div class="num">04 / 10</div>
+</section>
+
+<!-- 5. Vetting -->
+<section class="slide">
+  <div class="eyebrow">Vetting — the part nobody does</div>
+  <h1>Four checks, every agent,<br>every run.</h1>
+  <div class="checks">
+    <div class="check"><b>Liveness</b><p>Is it actually up, right now, on the endpoint it claims?</p></div>
+    <div class="check"><b>Card conformance</b><p>Does the A2A card match what the agent actually returns?</p></div>
+    <div class="check"><b>Held-out probe</b><p>A fresh question, generated per run — can't be studied for in advance.</p></div>
+    <div class="check"><b>Honesty canary</b><p>A fact that does not exist. Inventing an answer is an automatic veto, not a point deduction.</p></div>
+  </div>
+  <div class="reject">rejected: oracle — honesty canary failed (fabricated an answer to a fact that doesn't exist)</div>
+  <div class="num">05 / 10</div>
+</section>
+
+<!-- 6. Receipts and the chain -->
+<section class="slide">
+  <div class="eyebrow">Receipts and the chain</div>
+  <h1>Every call is a signed,<br><span class="accent">tamper-evident</span> receipt.</h1>
+  <ul class="clean">
+    <li>Each receipt: card hash, input/output hashes, latency, cost — Ed25519-signed.</li>
+    <li>Receipts hash-chain into a ledger. Edit one digit anywhere, verification fails at that exact event.</li>
+    <li>Verifiable offline, by anyone, with the public key alone. No trust in Foreman required to check Foreman.</li>
+  </ul>
+  <div class="num">06 / 10</div>
+</section>
+
+<!-- 7. Verification and re-routing -->
+<section class="slide">
+  <div class="eyebrow">Verification and re-routing</div>
+  <h1>Deterministic first.<br>Gemini judge second.</h1>
+  <p class="lede">Totals reconcile, limits hold — checked in code, not by a model, wherever code can check it.</p>
+  <p class="lede">Only what needs judgment goes to a Gemini judge against the task's acceptance criterion. A failed result gets feedback, a retry, then a re-route to another agent — not a silent pass.</p>
+  <p class="pull" style="margin-top:18px;"><span class="q">Live run:</span> an arithmetic slip in a delegate's answer, caught and corrected before delivery.</p>
+  <div class="num">07 / 10</div>
+</section>
+
+<!-- 8. Track record -->
+<section class="slide">
+  <div class="eyebrow">Track record — verified on live Gemini, 26 Sep</div>
+  <h1>Trust is earned<br>across runs, not declared.</h1>
+  <table class="stats">
+    <tr><th>Run</th><th>Result</th></tr>
+    <tr><td>Plan → 3 subtasks</td><td class="ok">3 agents hired, 2 rejected at vetting</td></tr>
+    <tr><td>Delegated work</td><td class="ok">3 / 3 subtasks passed the judge</td></tr>
+    <tr><td>Audit ledger</td><td class="ok">45 events, verify → {"ok": true, "checked": 45}</td></tr>
+    <tr><td>Honesty canary (oracle)</td><td class="bad">vetoed — never reaches hire, regardless of score</td></tr>
+  </table>
+  <p class="cap">Every scorecard is a running tally per agent, shown on its card the next time it's discovered.</p>
+  <div class="num">08 / 10</div>
+</section>
+
+<!-- 9. Google Cloud stack -->
+<section class="slide">
+  <div class="eyebrow">Google Cloud stack</div>
+  <h1 style="font-size:44px; margin-bottom:16px;">Built on the stack this problem actually needs.</h1>
+  <div class="stack">
+    <span class="pill">ADK 2.x agents</span>
+    <span class="pill">A2A protocol</span>
+    <span class="pill">Gemini 3.1 Flash-Lite</span>
+    <span class="pill">Gemini 3.6 Flash</span>
+    <span class="pill">Cloud Run — 7 services, one image</span>
+    <span class="pill">FastAPI + SSE live UI</span>
+  </div>
+  <img class="shot" src="../ui-fake-run.png" alt="Foreman UI — four stages live">
+  <div class="num">09 / 10</div>
+</section>
+
+<!-- 10. Why it matters + ask -->
+<section class="slide">
+  <div class="eyebrow">Why it matters</div>
+  <h1>From a demo registry to <span class="accent">any A2A endpoint.</span><br>From procurement to every function that hires outside help.</h1>
+  <p class="lede">Next: Firestore-backed ledger, per-tenant signing keys, Agent Platform packaging.</p>
+  <div class="cols">
+    <div class="col"><p class="lede"><b style="color:#fff">Repo</b><br>github.com/arnavbee/foreman</p></div>
+    <div class="col"><p class="lede"><b style="color:#fff">Live</b><br class="ghost">foreman — deployed on Cloud Run</p></div>
+  </div>
+  <div class="num">10 / 10</div>
+</section>
+
+</body>
+</html>
